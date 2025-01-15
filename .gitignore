@@ -1,0 +1,13 @@
+s# environment variables
+.env
+
+# python virtual environment
+.venv
+
+# pycache
+*.piece
+__pycache__/
+
+# metadata in macOS
+.DS_Store
+
