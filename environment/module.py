@@ -2,11 +2,12 @@
 """
 1. JobClass
     각 Job
-2. MachineClass (Job)
+2. MachineClass (Job)   
 """
 
-from typing import List, Optional
+from typing import List
 from random import randint
+import numpy as np
 
 class Job():
     def __init__(self, 
@@ -43,9 +44,9 @@ class Machine():
     def __init__(
             self,
             job: Job = None,
-            machineNum: int = 0,
+            machineNum: int = 0,        ##몇번째 operating을 수행하는 machine인지 
             leadTime: int| float = 0,   ##given by Job
-            mode: bool = False, ##False means permutation / True means nonPermutation
+            ##mode: bool = False, ##False means permutation / True means nonPermutation -> 필요없어 보이는데 ? 
             inspection: bool = False,   ##True면 해당 machine은 inspection을 담당하는 machine.
             available: bool = True,     ##True면 해당 machine은 현재 job을 받을 수 있는 상태 
     ):
@@ -53,7 +54,7 @@ class Machine():
         self.job = job
         self.machineNum = machineNum
         self.leadTime = leadTime
-        self.mode = mode
+        ## self.mode = mode --> 필요없어 보이는데 ? 
         self.inspection = inspection
         self.available = available
     
@@ -61,14 +62,12 @@ class Machine():
 ##Job을 할당할때 setMachine을 이용해서 Machine을 세팅한다.
     def setMachine(
             self,
-            job: Job,
-            leadTime: int,
+            job: Job
     ):
         self.job = job
-        self.leadTime = job.getLeadtime(machineNum = self.machineNum)
+        self.leadTime = job.getLeadTime(machineNum = self.machineNum)
         self.available = False
-    
-    
+
     
 
 
@@ -77,16 +76,83 @@ class Machine():
 class Environment():
     def __init__(
             self,
-            Mode: bool = False, ##False means permutation / True means nonPermutation
-            machineNum: int = 1, ##해당 갯수만큼의 Machine List를 만듦
-            jobNum: int = 5 ##해당 갯수만큼의 Job List를 만듦.
+            mode: bool = False,
+            operatingNum: int = 2,
+            jobNum: int = 10,
+            episode: int = 1
     ):
-        self.Mode: bool = Mode
-        self.machineNum: int = machineNum
-        self.makespan:int = 0  ##전체 Process소요시간
-        self.jobPool: List[Job]
+        self.makespan = 0 
+        self.jobNum = jobNum
+        self.mode = mode
+        self.operatingNum = operatingNum
+        
+        
+    ##create jobPool
+        self.jobPool = []
+        for i in range(0, self.jobNum):
+            self.jobPool.append(Job(operatingNum= operatingNum))
+        
+    ##create Process
+        self.process = []
+        for i in range(0, operatingNum):
+            self.process.append(Machine(machineNum=i))
+    
+    ##첫번재 job할당
+        self.process[0].setMachine(self.jobPool[0])
+    
+    def run(self):
+        ##맨 처음에 첫번째 machine에 Job투입
+        pass
 
 
+    def setInsepction(machineNum: int):
+        pass
+        """
+        일단 패스 ㅎㅎ
+        """
+    
+    #def run(self):
+    #    asdf
+
+
+
+    
+        
+                
+
+
+
+        
+
+##Test Methods
+    def showMachinesState(self):
+        for i in range(0, self.operatingNum):
+            print("-------------------------------------")
+            print(f"{i}번째 machine & job \n ")
+            print(self.process[i], "\n")
+            for j in range(0, self.jobNum):
+                print(f"{j}번째 job의 {i}번째 machine lead time : ", self.jobPool[j].leadTimes[i])
+
+    def showEnvInf(self):
+        print('-------------------')
+        print(f"mode : {self.mode}")
+        print(f"operatingNum : {self.operatingNum}")
+        print(f"jobNum: {self.jobNum}")
+        print(f"makespan : {self.makespan}")
+        print('-------------------')
+    
+
+
+"""
+    def updateProcess(self):
+    ##현재 job이 할당된 machine이 있는지 확인
+        for i in range(0, self.operatingNum):
+            state = False
+            if self.process[i].available is False:
+                state = True 
+
+    ##job이 할당된 machine이 있으면 lead
+"""
 
 
 
@@ -108,14 +174,13 @@ machine갱신 logic:
 
 ## ---------  Test Area ------------------------------------------------------------------------------------------------------------------------------
 def main():
-## Creat Job Process
-    job = Job()
+## Create Environment
+    Env = Environment()
 
-## Test job method
-    for i in range(0,10):
-        leadTime = job.getLeadTime(i)
-        print('-------------------')
-        print(f"{i}번째 machine lead time : ", leadTime)
+## Run Environment
+    Env.run()
+    print(Env.process[0].leadTime)
+    print(Env.process[0].available)
     
 
 
