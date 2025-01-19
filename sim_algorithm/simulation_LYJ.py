@@ -160,32 +160,27 @@ for seq in range(0, job_num): ##inspect Output지점까지 일단 숫자 다채�
 2. InspectionOutput이후 ~ EndOfProcess까지 Permutation과 동일한 과정 수행.
 """
 
-print('******1차 report**********')
+print('\n\n--------------------1차 report--------------------')
 print(report)
 
 
 ##Job순서를 InspectionOutput값을 기준으로 오름차순 정렬
 rearranged_report = report.sort_values(by=["inso"], ascending=[True])
-print('******2차 rearranged_report**********')
+print('\n\n--------------------2차 rearranged_report--------------------')
 print(rearranged_report)
 
 
 ##Permutation Version과 동일한 과정을 수행하며 inspection이후의 칸들 채움
 ##단, 이후로는 Inspection과정이 없으므로 inspect in / out column을 채우는 Logic은 제외해도 된다.
 for seq in range(0, job_num):
-    print(f"지금 seq= {seq}")
     #insepctOutput그 다음 Machine부터 작업 수행.
     ##inpect_point = 2이면 2번째 machine까지 끝난 이후에 inspectio을 진행한다는 뜻이다.
     for mc in range(3 + inspect_point*2 + 1 + 1 , 3 + total_proc_num):
-        print(f"현재 seq: {seq}, 현재 mc: {mc}")
         if mc % 2 == 1:
             ##첫번째 작업 예외 처리
             if seq == 0:
-                print('일단 여기 들어왔따?')
-                print(f"test : {rearranged_report.iloc[seq,mc]}")
                 rearranged_report.iloc[seq, mc] = rearranged_report.iloc[seq, mc-1]
             else:
-                print('그리고 여기도 들어왔따?')
                 rearranged_report.iloc[seq, mc] = max(rearranged_report.iloc[seq, mc-1], rearranged_report.iloc[seq-1, mc+1])
         
         else:
@@ -197,7 +192,7 @@ for seq in range(0, job_num):
             rearranged_report.iloc[seq,mc] = rearranged_report.iloc[seq, mc-1] + mc_job_matrix[machine][job]
 
 
-print('******Final rearranged_report**********')
+print('\n\n--------------------Final rearranged_report--------------------')
 print(rearranged_report)
         
         
