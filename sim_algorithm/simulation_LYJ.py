@@ -14,7 +14,7 @@ machine_range = [[10, 20], [20, 30], [10, 50]]
 
 # input 바탕으로 변수 생성
 machine_num = len(machine_range)
-inspect_point = random.randint(0, machine_num)  # 실제론 이렇게 쓰겠지만, 코드를 위해 상수 고정 후 코딩
+inspect_point = random.randint(1, machine_num)  # 실제론 이렇게 쓰겠지만, 코드를 위해 상수 고정 후 코딩
 #inspect_point = 2 # 2 번째 기계 완료 후 검사 진행
 
 
@@ -85,56 +85,130 @@ report
 
 
 
-### Ver. 2 - NonPermutation
-total_proc_num = machine_num*2 + 2 #총 공정 수 = machine * 2 (I/O) + 2(inpect I/O)
 
-for seq in range(0, inspect_point + 1): ##inspect Output지점까지 일단 숫자 다채움
-    for mc in range(3, 3 + total_proc_num):
+
+### Ver. 2 - NonPermutation
+##1. 처음 ~ InspectionOutput까지 
+total_proc_num = machine_num*2 + 2 #총 공정 수 = machine * 2 (I/O) + 2(inpect I/O)
+print(f"total proc num = {machine_num* 2 + 2}")
+
+for seq in range(0, job_num): ##inspect Output지점까지 일단 숫자 다채움
+    for mc in range(3, 3 + inspect_point*2 + 1 + 1):
 
 
         ##inspect in column 검토 중인 경우
         if mc == (3 + inspect_point*2):
-
-        ##첫 번째 작업일 경우 예외처리
+            ##첫 번째 작업일 경우 예외처리
             if seq == 0:
                 report.iloc[0, mc] = report.iloc[0,mc-1]
+            ##첫 번째 작업이 아니라면
             else:
-                previous_inspec = -1
-                previous_ins_seq = -1
-                """
-                이전 inspect를 거친 job을 찾는다.
-                그 job의 inpect output과 지금 내 job의 이전 out을 비교해 더 큰값을 inpect input값으로 한다.
-                """
-                pre_proc = range(0, seq)
-                for i in reversed(pre_proc):
-                    previous_inspec = report.iloc[i,1]
-                    if previous_inspec is 1:
-                        previous_ins_seq = pre_proc
-                        break
-                ##지금 inpect가 처음 이라면
-                if previous_inspec is 0: 
-                    report.iloc[seq, mc] = report.iloc[seq, mc-1]
-
-                ##이전 단계에 inspect가 들어간 Job이 있다면
-                ##젤 최근에 inspect를 진행한 Job의 InspectOutput과 현재 job의 이전 단계 machine의 output중에서 큰 값을 집어넣는다.
-                else:
-                    report.iloc[seq, mc] = max(report.iloc[seq, mc-1], report.iloc[previous_ins_seq, mc+1]) 
-        
-        
-            ##inspect out칼럼 검토 중인 경우
-            if mc == (3 + inspect_point*2 + 1):
-            ## inspect대상일 경우
+                ##inpect 대상일 경우
                 if report.iloc[seq,1] == 1:
-                    report.iloc[seq,mc] = report.iloc[seq,mc-1] + inspect_proc
-            ## inspect대상이 아닐 경우
+                    previous_inspec = -1
+                    previous_ins_seq = -1
+                    
+                    #이전 inspect를 거친 job을 찾는다.
+                    #그 job의 inpect output과 지금 내 job의 이전 out을 비교해 더 큰값을 inpect input값으로 한다.
+                    pre_proc = range(0, seq)
+                    for i in reversed(pre_proc):
+                        previous_inspec = report.iloc[i,1]
+                        if (previous_inspec == 1):
+                            previous_ins_seq = i
+                            break
+                    ##지금 inpect가 처음 이라면
+                    if (previous_inspec == 0): 
+                        report.iloc[seq, mc] = report.iloc[seq, mc-1]
+
+                    ##이전 단계에 inspect가 들어간 Job이 있다면
+                    ##젤 최근에 inspect를 진행한 Job의 InspectOutput과 현재 job의 이전 단계 machine의 output중에서 큰 값을 집어넣는다.
+                    else:
+                        report.iloc[seq, mc] = max(report.iloc[seq, mc-1], report.iloc[previous_ins_seq, mc+1]) 
+                ##inspect 대상이 아니경우
                 else:
-                    report.iloc[seq, mc] = report.iloc[seq,mc-1] 
+                    report.iloc[seq,mc] = report.iloc[seq, mc-1]
+        
+        
+        ##inspect out칼럼 검토 중인 경우
+        elif mc == (3 + inspect_point*2 + 1):
+            ## inspect대상일 경우
+            if report.iloc[seq,1] == 1:
+                report.iloc[seq,mc] = report.iloc[seq,mc-1] + inspect_proc
+            ## inspect대상이 아닐 경우
+            else:
+                report.iloc[seq, mc] = report.iloc[seq,mc-1] 
+        
+
+        ##일반 기계 in 칼럼 검토 중인 경우
+        elif mc % 2 == 1:
+            ##첫번째 작업은 예외 처리
+            if seq == 0:
+                report.iloc[0, mc] = report.iloc[0, mc-1]
+            else:
+                report.iloc[seq, mc] = max(report.iloc[seq, mc-1], report.iloc[seq-1, mc+1])
+        
+        ##일반 기계 out 칼럼 검토 중인 경우
+        else:
+            col = report.columns[mc]
+            machine = int(col[2:3])
+            job = report.iloc[seq, 0]
+            report.iloc[seq, mc] = report.iloc[seq,mc-1] + mc_job_matrix[machine][job]
+
+##2. InspectionOutput이후 ~ EndOfProcess 
+"""
+1. 각 Row들 InspectionOutput값을 기준으로 오름차순 정렬.
+2. InspectionOutput이후 ~ EndOfProcess까지 Permutation과 동일한 과정 수행.
+"""
+
+print('******1차 report**********')
+print(report)
+
+
+##Job순서를 InspectionOutput값을 기준으로 오름차순 정렬
+rearranged_report = report.sort_values(by=["inso"], ascending=[True])
+print('******2차 rearranged_report**********')
+print(rearranged_report)
+
+
+##Permutation Version과 동일한 과정을 수행하며 inspection이후의 칸들 채움
+##단, 이후로는 Inspection과정이 없으므로 inspect in / out column을 채우는 Logic은 제외해도 된다.
+for seq in range(0, job_num):
+    print(f"지금 seq= {seq}")
+    #insepctOutput그 다음 Machine부터 작업 수행.
+    ##inpect_point = 2이면 2번째 machine까지 끝난 이후에 inspectio을 진행한다는 뜻이다.
+    for mc in range(3 + inspect_point*2 + 1 + 1 , 3 + total_proc_num):
+        print(f"현재 seq: {seq}, 현재 mc: {mc}")
+        if mc % 2 == 1:
+            ##첫번째 작업 예외 처리
+            if seq == 0:
+                print('일단 여기 들어왔따?')
+                print(f"test : {rearranged_report.iloc[seq,mc]}")
+                rearranged_report.iloc[seq, mc] = rearranged_report.iloc[seq, mc-1]
+            else:
+                print('그리고 여기도 들어왔따?')
+                rearranged_report.iloc[seq, mc] = max(rearranged_report.iloc[seq, mc-1], rearranged_report.iloc[seq-1, mc+1])
+        
+        else:
+            col = rearranged_report.columns[mc]
+            ##machine숫자 parsing
+            machine = int(col[2:3])
+            ##job number parsing
+            job = rearranged_report.iloc[seq,0]
+            rearranged_report.iloc[seq,mc] = rearranged_report.iloc[seq, mc-1] + mc_job_matrix[machine][job]
+
+
+print('******Final rearranged_report**********')
+print(rearranged_report)
+        
+        
+
                     
         
                     
                     
                 
                 
+
 
 
 """
