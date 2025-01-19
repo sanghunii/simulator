@@ -1,3 +1,15 @@
+""" 
+개선 방안
+
+스케쥴링의 대상이 되는 job의 갯수와 process갯수가 늘어날 수록 메모리에 부담이 많아진다.
+또한 모든 job sequence를 다 생성하고 report의 칸들을 채우는 코드의 특성상 
+실험 인스턴스의 규모가 커질 수록 성능상의 문제 또한 발생한다. 
+
+Permutation이나 NonPermutation이나 어짜피 맨 처음 투입되는 job부터 report의 값이 채워지니깐
+python generator를 이용해서 필요한 job들을 그때그때 만들어서 투입시키는 쪽으로 향후에
+시뮬레이터를 개선시킬 여지가 있다. 
+"""
+
 import pandas as pd
 import numpy as np
 
@@ -197,7 +209,8 @@ print(rearranged_report)
         
         
 
-                    
+
+
         
                     
                     
