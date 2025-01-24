@@ -49,6 +49,7 @@ mc_job_matrix
 
 
 
+
 # RL 결과 대신 랜덤값으로 대체
 ## job_sequence 생성 코드
 x=0
@@ -100,7 +101,7 @@ report
 
 
 ### Ver. 2 - NonPermutation
-##1. 처음 ~ InspectionOutput까지 
+##Stpe 1. 처음 ~ InspectionOutput까지 
 total_proc_num = machine_num*2 + 2 #총 공정 수 = machine * 2 (I/O) + 2(inpect I/O)
 print(f"total proc num = {machine_num* 2 + 2}")
 
@@ -166,19 +167,21 @@ for seq in range(0, job_num): ##inspect Output지점까지 일단 숫자 다채�
             job = report.iloc[seq, 0]
             report.iloc[seq, mc] = report.iloc[seq,mc-1] + mc_job_matrix[machine][job]
 
-##2. InspectionOutput이후 ~ EndOfProcess 
-"""
+print("-----------------Step1 결과 ----------------- ")
+print(report)
+
+
+## Step2. InspectionOutput이후 ~ EndOfProcess 
+""" OutLine
 1. 각 Row들 InspectionOutput값을 기준으로 오름차순 정렬.
 2. InspectionOutput이후 ~ EndOfProcess까지 Permutation과 동일한 과정 수행.
 """
 
-print('\n\n--------------------1차 report--------------------')
-print(report)
 
 
 ##Job순서를 InspectionOutput값을 기준으로 오름차순 정렬
 rearranged_report = report.sort_values(by=["inso"], ascending=[True])
-print('\n\n--------------------2차 rearranged_report--------------------')
+print("-----------------재정렬 결과 ----------------- ")
 print(rearranged_report)
 
 
@@ -186,7 +189,7 @@ print(rearranged_report)
 ##단, 이후로는 Inspection과정이 없으므로 inspect in / out column을 채우는 Logic은 제외해도 된다.
 for seq in range(0, job_num):
     #insepctOutput그 다음 Machine부터 작업 수행.
-    ##inpect_point = 2이면 2번째 machine까지 끝난 이후에 inspectio을 진행한다는 뜻이다.
+    ##inpect_point = 2이면 2번째 machine까지 끝난 이후에 inspection을 진행한다는 뜻이다.
     for mc in range(3 + inspect_point*2 + 1 + 1 , 3 + total_proc_num):
         if mc % 2 == 1:
             ##첫번째 작업 예외 처리
@@ -203,8 +206,7 @@ for seq in range(0, job_num):
             job = rearranged_report.iloc[seq,0]
             rearranged_report.iloc[seq,mc] = rearranged_report.iloc[seq, mc-1] + mc_job_matrix[machine][job]
 
-
-print('\n\n--------------------Final rearranged_report--------------------')
+print("-----------------최종 결과 ----------------- ")
 print(rearranged_report)
         
         
