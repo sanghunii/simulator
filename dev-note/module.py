@@ -69,7 +69,7 @@ class Machine():
         self.available = False
 
     
-
+aaaa
 
 
 
