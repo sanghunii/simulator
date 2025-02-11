@@ -104,8 +104,7 @@ class ENV():
         return self.report
     
     def show(self):
-        print(self.inspect_point)
-        print(self.inspect_proc)
+        print(self.RL_result)
 
 
         
@@ -118,8 +117,8 @@ class ENV():
 """Test Code"""
 def main():
     env = ENV()
-    reports = env.Run_Permutaion()
-    print(reports)
+    reports = env.Run_Nonpermutation()
+    env.show()
     
     
     
