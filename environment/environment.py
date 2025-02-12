@@ -104,8 +104,14 @@ class ENV():
         return self.report
     
     def show(self):
-        print(self.report)
+        return (self.report)
 
+
+if __name__ == '__main__':
+    env = ENV()
+    report = env.show()
+    for i in report:
+        print(i)
 
         
         
