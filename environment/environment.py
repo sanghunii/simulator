@@ -104,7 +104,7 @@ class ENV():
         return self.report
     
     def show(self):
-        print(self.RL_result)
+        print(self.report)
 
 
         
