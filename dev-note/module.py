@@ -37,7 +37,6 @@ class Job():
 
 
     
-aafd 
 
 
 class Machine():
@@ -69,7 +68,7 @@ class Machine():
         self.available = False
 
     
-aaaa
+
 
 
 
