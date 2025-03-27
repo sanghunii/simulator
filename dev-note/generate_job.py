@@ -7,8 +7,8 @@ mc2_proc = []
 
 # machine1의 process time 생성.
 for _ in range(0,10):
-    mc1_proc.append(random.randint(10,30))
-    mc2_proc.append(random.randint(20,40))
+    mc1_proc.append(random.randint(20,30))
+    mc2_proc.append(random.randint(10, 20))
 
 
 print('-'*20 + 'process time for machine 1' + '-'*20)
