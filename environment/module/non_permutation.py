@@ -36,6 +36,11 @@ def Scheduling_NPermutation (
     for _ in range(job_num):
         job_sequence.append(x)
         x+=1
+        
+    """
+    mc1_순서 = RL_module1()
+    mc2_순서 = RL_module2()
+    """
 
     # machine별 job_sequence(job투입순서)
     random.shuffle(job_sequence)
