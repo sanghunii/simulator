@@ -68,7 +68,6 @@ class Machine():
         self.leadTime = job.getLeadTime(machineNum = self.machineNum)
         self.available = False
 
-    
 
 
 
